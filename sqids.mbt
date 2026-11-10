@@ -16,9 +16,10 @@ pub suberror ConfigError {
 } derive(Debug)
 
 ///|
-/// A number outside the supported range.
+/// A number outside the supported range or all candidate IDs were blocked.
 pub suberror EncodeError {
   NumberOutOfRange(Int64)
+  BlocklistExhausted
 } derive(Debug)
 
 ///|
@@ -32,14 +33,17 @@ pub suberror DecodeError {
 struct Sqids {
   alphabet : Array[Char]
   min_length : Int
+  blocklist : Array[BlockedWord]
 }
 
 ///|
 /// Create a codec. The alphabet must contain at least three distinct ASCII
 /// characters. The minimum length is between 0 and 255, inclusive.
+/// A supplied blocklist replaces the default list. Use [] to disable it.
 pub fn Sqids::new(
   alphabet? : String = default_alphabet,
   min_length? : Int = 0,
+  blocklist? : ArrayView[String],
 ) -> Sqids raise ConfigError {
   let chars = alphabet.to_array()
   if chars.any(c => c.to_int() > 127) {
@@ -59,8 +63,10 @@ pub fn Sqids::new(
   if min_length < 0 || min_length > 255 {
     raise InvalidMinLength(min_length)
   }
+  let words = blocklist.unwrap_or(default_blocklist[:])
+  let filtered = filter_blocklist(alphabet, words)
   shuffle(chars)
-  { alphabet: chars, min_length, }
+  { alphabet: chars, min_length, blocklist: filtered, }
 }
 
 ///|
@@ -83,7 +89,14 @@ pub fn Sqids::encode(
     // Reduce each term so long sequences cannot overflow the offset sum.
     offset = (offset + index % size + letter.to_int()) % size
   }
-  self.encode_at(numbers, offset)
+  // Each offset produces a different prefix. After one cycle no new ID is possible.
+  for increment in 0..<size {
+    let id = self.encode_at(numbers, (offset + increment) % size)
+    if !is_blocked(id, self.blocklist) {
+      return id
+    }
+  }
+  raise BlocklistExhausted
 }
 
 ///|
