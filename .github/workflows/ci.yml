@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - name: Install pinned MoonBit toolchain
+        run: |
+          curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o "$RUNNER_TEMP/install-moonbit.sh"
+          bash "$RUNNER_TEMP/install-moonbit.sh" 0.10.12+1634b282e
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Install the pinned Sqids oracle
+        run: npm ci --prefix tools/oracle --ignore-scripts --no-audit --no-fund
+      - name: Test Native and JavaScript
+        run: |
+          moon version --all
+          timeout 60s moon test --target native,js --deny-warn
+      - name: Check formatting and types
+        run: |
+          moon fmt --check
+          moon check --target native,js --deny-warn
+      - name: Build both supported backends
+        run: moon build --target native,js --release --deny-warn
+      - name: Compare with official Sqids JavaScript
+        run: npm test --prefix tools/oracle
+      - name: Run examples and test the release archive
+        run: |
+          moon run --target native examples/record
+          moon run --target js examples/compound
+          npm run interop --prefix tools/oracle
+          python3 tools/check_package.py
