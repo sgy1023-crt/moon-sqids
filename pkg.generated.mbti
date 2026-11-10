@@ -1,0 +1,38 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "sgy/moon-sqids"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub let default_alphabet : String
+
+pub let max_number : Int64
+
+// Errors
+pub suberror ConfigError {
+  NonAsciiAlphabet
+  AlphabetTooShort(Int)
+  DuplicateAlphabetCharacter(Char)
+  InvalidMinLength(Int)
+} derive(@debug.Debug)
+
+pub suberror DecodeError {
+  NumberOverflow
+} derive(@debug.Debug)
+
+pub suberror EncodeError {
+  NumberOutOfRange(Int64)
+  BlocklistExhausted
+} derive(@debug.Debug)
+
+// Types and methods
+type Sqids
+pub fn Sqids::decode(Self, String) -> Array[Int64] raise DecodeError
+pub fn Sqids::encode(Self, ArrayView[Int64]) -> String raise EncodeError
+pub fn Sqids::new(alphabet? : String, min_length? : Int, blocklist? : ArrayView[String]) -> Self raise ConfigError
+
+// Type aliases
+
+// Traits
