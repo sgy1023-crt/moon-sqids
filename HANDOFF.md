@@ -20,14 +20,14 @@
 | `moon run --target <native 或 js> examples/record` 与 `examples/compound` | 两个示例在两个后端均还原输入 |
 | `npm run interop --prefix tools/oracle` | JS → MoonBit 和 MoonBit → JS，两个后端各通过两条路径 |
 | `python tools/check_package.py` | 重新打包、解压到外部临时工作区，独立项目两个后端各 1 通过，0 失败 |
-| `moon package` | 生成 `_build/publish/sgy-moon-sqids-0.1.0.zip`。待填真实仓库 URL，因此有 `repository` 字段警告 |
+| `moon package` | 生成 `_build/publish/sgy-moon-sqids-0.1.0.zip`。模块元数据包含公开 GitHub 仓库链接 |
 
-开发期间，Windows 禁止创建模板 README 的符号链接，已改为普通 `README.md` 并验证打包。边界测试的错误捕获写法和示例的 `main` 错误声明经编译诊断修正后重跑通过。Wasm、LLVM 和托管 GitHub Actions 未运行。
+开发期间，Windows 禁止创建模板 README 的符号链接，已改为普通 `README.md` 并验证打包。边界测试的错误捕获写法和示例的 `main` 错误声明经编译诊断修正后重跑通过。Wasm 和 LLVM 未运行。托管 CI 的状态以 GitHub Actions 为准。
 
 ## 申报和发布状态
 
-- **初审技术材料齐备，当前正式报名 NO。** 报名需要公开 GitHub URL、符合规则的有效提交、本人撰写的一页申报书及表单信息。需核对当月截止、当前完成度对启动资助的影响和多项目口径。
-- **完整本地工程 YES。** 包已验证可从归档安装使用。公开发布前确认拥有的 Mooncakes 命名空间，补齐 `moon.mod` 的真实仓库链接，公开仓库后查看托管 CI，再按授权发布包。 `moon publish` 与实际赛事验收待执行。
+- **初审技术材料齐备。** 表单可填写 [公开 GitHub 仓库](https://github.com/sgy1023-crt/moon-sqids)。参赛者本人撰写一页申报书及填写其他表单信息，组委会按规则核查有效提交。需核对当月截止、当前完成度对启动资助的影响和多项目口径。
+- **完整本地工程 YES。** 包已验证可从归档安装使用。发布 Mooncakes 前确认拥有的命名空间，并按授权发布包。 `moon publish` 与实际赛事验收待执行。
 - **可延期。** Wasm 或 LLVM 验证，以及 canonical 辅助 API，均为当前范围之外的可选工作。
 
 [兼容性和固定版本](docs/COMPATIBILITY.md) · [赛事规则及待办](docs/HACKATHON.md)
