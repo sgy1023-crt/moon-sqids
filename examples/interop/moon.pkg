@@ -1,0 +1,8 @@
+import {
+  "sgy/moon-sqids" @sqids,
+  "moonbitlang/core/debug",
+  "moonbitlang/core/env",
+  "moonbitlang/core/json",
+}
+
+pkgtype(kind: "executable")

@@ -1,0 +1,12 @@
+{
+  "name": "moonsqids-oracle",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node differential.mjs",
+    "interop": "node interop.mjs"
+  },
+  "dependencies": {
+    "sqids": "0.3.0"
+  }
+}
