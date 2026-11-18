@@ -24,7 +24,7 @@ test "a different alphabet preserves the old record key" {
 ///|
 test "bad versions, aliases and malformed separators cannot fall back to v1" {
   let registry = @migration.Registry::parse(sample_policy)
-  for id in ["~A6da", "v1~", "v1~A6da~again", "V1~A6da"] {
+  for id in ["~A6da", "v1~", "v1~A~B", "V1~A6da"] {
     try registry.decode(id) catch {
       @migration.MalformedToken => ()
       error => raise error

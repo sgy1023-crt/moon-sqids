@@ -36,6 +36,7 @@ pub suberror ManifestError {
   InvalidField(String)
   DuplicateField(String)
   EmptySchema
+  TooManyFields(Int)
 } derive(Debug)
 
 ///|
@@ -43,6 +44,7 @@ pub suberror ManifestError {
 struct Registry {
   manifest : Manifest
   codecs : Map[String, @sqids.Sqids]
+  max_token_length : Int
 }
 
 ///|
@@ -61,6 +63,9 @@ pub fn Registry::new(manifest : Manifest) -> Registry raise ManifestError {
   if manifest.fields.is_empty() {
     raise EmptySchema
   }
+  if manifest.fields.length() > 64 {
+    raise TooManyFields(manifest.fields.length())
+  }
   let names : Map[String, Unit] = Map([])
   for field in manifest.fields {
     if field.name.is_empty() ||
@@ -75,6 +80,7 @@ pub fn Registry::new(manifest : Manifest) -> Registry raise ManifestError {
     names[field.name] = ()
   }
   let codecs : Map[String, @sqids.Sqids] = Map([])
+  let mut max_token_length = 0
   for profile in manifest.profiles {
     let version = profile.version
     if !valid_version(version) {
@@ -102,6 +108,20 @@ pub fn Registry::new(manifest : Manifest) -> Registry raise ManifestError {
       error => raise InvalidSqids(version, error)
     }
     codecs[version] = codec
+    let radix = (profile.alphabet.code_units().length() - 1).to_int64()
+    let mut payload_limit = manifest.fields.length()
+    for field in manifest.fields {
+      let mut value = field.max
+      payload_limit += 1
+      while value >= radix {
+        value = value / radix
+        payload_limit += 1
+      }
+    }
+    let limit = version.code_units().length() +
+      1 +
+      payload_limit.max(profile.min_length)
+    max_token_length = max_token_length.max(limit)
   }
   if !codecs.contains(manifest.current) {
     raise UnconfiguredVersion(manifest.current)
@@ -117,7 +137,7 @@ pub fn Registry::new(manifest : Manifest) -> Registry raise ManifestError {
       blocklist: profile.blocklist.copy(),
     }),
   }
-  { manifest: snapshot, codecs, }
+  { manifest: snapshot, codecs, max_token_length, }
 }
 
 ///|

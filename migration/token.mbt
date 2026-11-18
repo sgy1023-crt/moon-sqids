@@ -4,6 +4,7 @@ pub suberror TokenError {
   MissingVersion
   UnknownVersion(String)
   MalformedToken
+  TokenTooLong(Int)
   InvalidPayload(String, @sqids.CanonicalError)
   CannotEncode(String, @sqids.EncodeError)
   WrongFieldCount(Int, Int)
@@ -39,6 +40,9 @@ pub fn Registry::decode(
   self : Registry,
   token : String,
 ) -> DecodedToken raise TokenError {
+  if token.code_units().length() > self.max_token_length {
+    raise TokenTooLong(self.max_token_length)
+  }
   let (version, payload, legacy) = match token.split_once("~") {
     Some((tag, payload)) => {
       let version = tag.to_owned()

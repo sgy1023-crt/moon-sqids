@@ -20,12 +20,14 @@ pub suberror ManifestError {
   InvalidField(String)
   DuplicateField(String)
   EmptySchema
+  TooManyFields(Int)
 } derive(@debug.Debug)
 
 pub suberror TokenError {
   MissingVersion
   UnknownVersion(String)
   MalformedToken
+  TokenTooLong(Int)
   InvalidPayload(String, @moon-sqids.CanonicalError)
   CannotEncode(String, @moon-sqids.EncodeError)
   WrongFieldCount(Int, Int)

@@ -34,6 +34,7 @@ pub fn TokenError::code(self : TokenError) -> String {
     MissingVersion => "missing_version"
     UnknownVersion(_) => "unknown_version"
     MalformedToken => "malformed_token"
+    TokenTooLong(_) => "token_too_long"
     InvalidPayload(_, @sqids.InvalidId) => "invalid_payload"
     InvalidPayload(_, @sqids.NonCanonicalId) => "noncanonical_payload"
     InvalidPayload(_, @sqids.CanonicalDecodeFailure(_)) => "numeric_overflow"
