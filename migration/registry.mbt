@@ -109,7 +109,15 @@ pub fn Registry::new(manifest : Manifest) -> Registry raise ManifestError {
   if manifest.legacy is Some(version) && !codecs.contains(version) {
     raise UnconfiguredVersion(version)
   }
-  { manifest, codecs, }
+  let snapshot = Manifest::{
+    ..manifest,
+    fields: manifest.fields.copy(),
+    profiles: manifest.profiles.map(profile => Profile::{
+      ..profile,
+      blocklist: profile.blocklist.copy(),
+    }),
+  }
+  { manifest: snapshot, codecs, }
 }
 
 ///|

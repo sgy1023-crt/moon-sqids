@@ -32,6 +32,13 @@ pub suberror TokenError {
   FieldOutOfRange(String)
 } derive(@debug.Debug)
 
+pub suberror UpgradeError {
+  RemovedVersion(String)
+  ChangedVersion(String)
+  ChangedLegacyVersion
+  ChangedFields
+} derive(@debug.Debug)
+
 // Types and methods
 pub struct DecodedToken {
   version : String
@@ -60,6 +67,7 @@ pub(all) struct Profile {
 } derive(Eq, @json.FromJson)
 
 type Registry
+pub fn Registry::check_upgrade(Self, Self) -> Unit raise UpgradeError
 pub fn Registry::decode(Self, String) -> DecodedToken raise TokenError
 pub fn Registry::encode(Self, ArrayView[Int64]) -> String raise TokenError
 pub fn Registry::new(Manifest) -> Self raise ManifestError
