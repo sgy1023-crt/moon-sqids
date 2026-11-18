@@ -1,0 +1,70 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "sgy/moon-sqids/migration"
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+  "sgy/moon-sqids",
+}
+
+// Values
+
+// Errors
+pub suberror ManifestError {
+  BadJson(String)
+  BadVersion(String)
+  DuplicateVersion(String)
+  UnconfiguredVersion(String)
+  UnsafeAlphabet(String)
+  InvalidSqids(String, @moon-sqids.ConfigError)
+  InvalidField(String)
+  DuplicateField(String)
+  EmptySchema
+} derive(@debug.Debug)
+
+pub suberror TokenError {
+  MissingVersion
+  UnknownVersion(String)
+  MalformedToken
+  InvalidPayload(String, @moon-sqids.CanonicalError)
+  CannotEncode(String, @moon-sqids.EncodeError)
+  WrongFieldCount(Int, Int)
+  FieldOutOfRange(String)
+} derive(@debug.Debug)
+
+// Types and methods
+pub struct DecodedToken {
+  version : String
+  numbers : Array[Int64]
+  legacy : Bool
+}
+
+pub(all) struct Field {
+  name : String
+  min : Int64
+  max : Int64
+} derive(Eq, @json.FromJson)
+
+pub(all) struct Manifest {
+  current : String
+  legacy : String?
+  fields : Array[Field]
+  profiles : Array[Profile]
+} derive(@json.FromJson)
+
+pub(all) struct Profile {
+  version : String
+  alphabet : String
+  min_length : Int
+  blocklist : Array[String]
+} derive(Eq, @json.FromJson)
+
+type Registry
+pub fn Registry::decode(Self, String) -> DecodedToken raise TokenError
+pub fn Registry::encode(Self, ArrayView[Int64]) -> String raise TokenError
+pub fn Registry::new(Manifest) -> Self raise ManifestError
+pub fn Registry::parse(String) -> Self raise ManifestError
+
+// Type aliases
+
+// Traits
