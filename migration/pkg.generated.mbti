@@ -31,6 +31,7 @@ pub suberror TokenError {
   WrongFieldCount(Int, Int)
   FieldOutOfRange(String)
 } derive(@debug.Debug)
+pub fn TokenError::code(Self) -> String
 
 pub suberror UpgradeError {
   RemovedVersion(String)
@@ -59,6 +60,14 @@ pub(all) struct Manifest {
   profiles : Array[Profile]
 } derive(@json.FromJson)
 
+pub struct Mapping {
+  source_id : String
+  source_version : String
+  target_id : String
+  numbers : Array[Int64]
+  changed : Bool
+} derive(ToJson)
+
 pub(all) struct Profile {
   version : String
   alphabet : String
@@ -72,6 +81,7 @@ pub fn Registry::decode(Self, String) -> DecodedToken raise TokenError
 pub fn Registry::encode(Self, ArrayView[Int64]) -> String raise TokenError
 pub fn Registry::new(Manifest) -> Self raise ManifestError
 pub fn Registry::parse(String) -> Self raise ManifestError
+pub fn Registry::plan(Self, String) -> Mapping raise TokenError
 
 // Type aliases
 
