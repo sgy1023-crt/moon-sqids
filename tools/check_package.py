@@ -27,6 +27,7 @@ def main():
         with zipfile.ZipFile(archives[0]) as archive:
             entries = set(archive.namelist())
             required = {"moon.mod", "moon.pkg", "sqids.mbt", "default_blocklist.mbt",
+                        "migration/moon.pkg", "migration/registry.mbt", "migration/plan.mbt",
                         "README.md", "LICENSE", "NOTICE.md"}
             if missing := required - entries:
                 raise RuntimeError(f"package is missing {sorted(missing)}")
@@ -40,11 +41,11 @@ def main():
             'members = ["consumer", "library"]\n', encoding="utf-8"
         )
         (consumer / "moon.mod").write_text(
-            'name = "smoke/consumer"\nimport { "sgy/moon-sqids@0.1.0" }\n',
+            'name = "smoke/consumer"\nimport { "sgy/moon-sqids@0.2.0" }\n',
             encoding="utf-8",
         )
         (consumer / "moon.pkg").write_text(
-            'import { "sgy/moon-sqids" @sqids } for "test"\n',
+            'import { "sgy/moon-sqids" @sqids, "sgy/moon-sqids/migration" @migration } for "test"\n',
             encoding="utf-8",
         )
         (consumer / "consumer_test.mbt").write_text(
@@ -57,6 +58,18 @@ def main():
   assert_eq(codec.encode([4572721L]), "JExTR")
   let custom = @sqids.Sqids::new(min_length=10, blocklist=["86Rf07"])
   assert_eq(custom.decode(custom.encode([1L, 2L, 3L])), [1L, 2L, 3L])
+}
+
+test "external module can upgrade a public ID" {
+  let policy =
+    #|{"current":"v2","legacy":"v1","fields":[{"name":"record","min":"1","max":"9007199254740991"}],"profiles":[
+    #|{"version":"v1","alphabet":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789","min_length":0,"blocklist":[]},
+    #|{"version":"v2","alphabet":"FxnXM1kBN6cuhsAvjW3Co7l2RePyY8DwaU04Tzt9fHQrqSVKdpimLGIJOgb5ZE","min_length":10,"blocklist":[]}]}
+  let registry = @migration.Registry::parse(policy)
+  let mapping = registry.plan("A6da")
+  assert_eq(mapping.target_id, "v2~Atbx25UEDm")
+  assert_eq(registry.decode(mapping.target_id).numbers, [12345L])
+  assert_false(registry.plan(mapping.target_id).changed)
 }
 """,
             encoding="utf-8",

@@ -1,6 +1,6 @@
 name = "sgy/moon-sqids"
 
-version = "0.1.0"
+version = "0.2.0"
 
 readme = "README.md"
 
@@ -14,4 +14,4 @@ preferred_target = "native"
 
 supported_targets = "+native+js"
 
-description = "Reversible, Sqids-compatible short IDs for MoonBit."
+description = "Sqids-compatible short IDs with versioned public links and batch migration."

@@ -2,7 +2,7 @@
 
 MoonSqids 将一个或多个非负整数编码为可逆短 ID。它用 MoonBit 实现 [Sqids 规范](https://github.com/sqids/sqids-spec)，适用于公开链接里的记录编号、由多个整数构成的定位参数，以及与其他语言服务交换短 ID。
 
-MoonSqids is a MoonBit port of Sqids for reversible short IDs. It supports Native and JavaScript with no third-party runtime dependencies.
+MoonSqids is a MoonBit port of Sqids for reversible short IDs. It also supports versioned public links, staged configuration changes and offline migration. The MoonBit library supports Native and JavaScript with no third-party runtime dependencies.
 
 NanoID 生成随机字符串。Hashids 有自己的编码格式。普通进制转换处理单个整数。MoonSqids 实现了 Sqids 的多整数分隔、字符表轮换、最小长度填充和屏蔽词重试。 [生态查重与对照](docs/ECOSYSTEM_RESEARCH.md)
 
@@ -18,7 +18,7 @@ members = ["app", "moon-sqids"]
 
 ```moonbit
 import {
-  "sgy/moon-sqids@0.1.0",
+  "sgy/moon-sqids@0.2.0",
 }
 ```
 
@@ -30,7 +30,7 @@ import {
 }
 ```
 
-如果该版本以当前命名空间发布到 Mooncakes，可使用 `moon add sgy/moon-sqids@0.1.0` 安装。当前版本尚未发布，模块归属须在发布前确认。
+当前版本可用本地源码和发布 ZIP 接入。Mooncakes 发布状态见 [交接记录](HANDOFF.md)。
 
 ## 编解码
 
@@ -66,6 +66,17 @@ let filtered = @sqids.Sqids::new(blocklist=["86Rf07"])
 
 短 ID 可逆，不能用于加密、哈希、身份验证、授权或数据保护。 [Sqids FAQ](https://sqids.org/faq)
 
+## 公开链接升级与迁移
+
+如果已对外发出短链接，可以使用 `sgy/moon-sqids/migration` 固定各版本的字符表、最小长度和屏蔽词，并约束 ID 中各整数字段的范围。读端可同时识别历史链接和带版本的新链接。写端切换前可以检查读端是否已经认识新配置。
+
+```sh
+moon build cmd/bridge --target js --release --deny-warn
+node cmd/moonsqids.mjs plan examples/rollout/manifest.json examples/rollout/ids.txt migration-report.jsonl
+```
+
+示例中的 `A6da` 迁移为 `v2~Atbx25UEDm`，二者定位同一条记录。命令按行输出映射及错误原因，报告写完后才出现目标文件。SDK 支持 Native 和 JS，命令行与 HTTP 示例用 Node.js 24 运行。 [部署、复现与文件格式](examples/rollout/README.md)
+
 ## 三个运行示例
 
 ```sh
@@ -91,6 +102,8 @@ moon build --target native,js --release --deny-warn
 npm ci --prefix tools/oracle
 npm test --prefix tools/oracle
 python tools/check_package.py
+node tools/check_record_rollout.mjs
+node tools/check_migration_cli.mjs
 moon package
 ```
 

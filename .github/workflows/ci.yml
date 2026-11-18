@@ -42,3 +42,8 @@ jobs:
           moon run --target js examples/compound
           npm run interop --prefix tools/oracle
           python3 tools/check_package.py
+      - name: Exercise public ID rollout and migration recovery
+        run: |
+          moon build cmd/bridge --target js --release --deny-warn
+          timeout 60s node tools/check_record_rollout.mjs
+          timeout 60s node tools/check_migration_cli.mjs

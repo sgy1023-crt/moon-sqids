@@ -26,9 +26,11 @@ blocklist 只影响编码结果。升级默认词表可能改变某些输入的�
 
 | 检查 | Native | JavaScript |
 | --- | --- | --- |
-| `moon test --target native,js --deny-warn` | 19 通过，0 失败 | 19 通过，0 失败 |
+| `moon test --target native,js --deny-warn` | 36 通过，0 失败 | 36 通过，0 失败 |
 | `npm test --prefix tools/oracle` | 1915 匹配，0 差异 | 1915 匹配，0 差异 |
 | `npm run interop --prefix tools/oracle` | 两条互通路径通过 | 两条互通路径通过 |
-| `python tools/check_package.py` | ZIP 独立消费测试 1 通过 | ZIP 独立消费测试 1 通过 |
+| `python tools/check_package.py` | ZIP 独立消费测试 2 通过 | ZIP 独立消费测试 2 通过 |
 
 差分脚本用固定种子 `0x4d535149` 生成输入，逐项比较 10 组配置的编码和解码结果，以及无效配置和预期错误。脚本在失败时逐条打印后端、输入、预期和实际结果。每个后端限时 60 秒。复现前运行 `npm ci --prefix tools/oracle`。
+
+0.2.0 在保留兼容接口的基础上增加了严格解码和 `migration` 包。带版本的公开 ID 使用 MoonSqids 的 `版本~原始 Sqid` 格式。跨语言交换原始 Sqid 时，继续使用根包的 `encode` 和 `decode`，或按同一份配置处理带版本外层。 [迁移流程](../examples/rollout/README.md)
