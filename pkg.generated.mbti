@@ -11,6 +11,13 @@ pub let default_alphabet : String
 pub let max_number : Int64
 
 // Errors
+pub suberror CanonicalError {
+  InvalidId
+  NonCanonicalId
+  CanonicalDecodeFailure(DecodeError)
+  CanonicalEncodeFailure(EncodeError)
+} derive(@debug.Debug)
+
 pub suberror ConfigError {
   NonAsciiAlphabet
   AlphabetTooShort(Int)
@@ -30,6 +37,7 @@ pub suberror EncodeError {
 // Types and methods
 type Sqids
 pub fn Sqids::decode(Self, String) -> Array[Int64] raise DecodeError
+pub fn Sqids::decode_canonical(Self, String) -> Array[Int64] raise CanonicalError
 pub fn Sqids::encode(Self, ArrayView[Int64]) -> String raise EncodeError
 pub fn Sqids::new(alphabet? : String, min_length? : Int, blocklist? : ArrayView[String]) -> Self raise ConfigError
 
