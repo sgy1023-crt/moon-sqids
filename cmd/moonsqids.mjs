@@ -112,13 +112,16 @@ async function plan(manifestPath, inputPath, reportPath) {
 
 async function main([command, ...args]) {
   if (command === 'plan' && args.length === 3) return await plan(...args);
-  if (command === 'check-upgrade' && args.length === 2) {
-    const result = JSON.parse(checkUpgrade(await manifest(args[0]), await manifest(args[1])));
+  if ((command === 'check-upgrade' || command === 'check-issuer') && args.length === 2) {
+    const result = JSON.parse(checkUpgrade(
+      await manifest(args[0]), await manifest(args[1]), command === 'check-issuer',
+    ));
     if (result.error) throw new Error(`${result.error}: ${result.detail}`);
     console.log(JSON.stringify(result));
     return 0;
   }
   const usage = 'Usage: moonsqids check-upgrade OLD.json NEW.json\n'
+    + '       moonsqids check-issuer READERS.json WRITER.json\n'
     + '       moonsqids plan MANIFEST.json INPUT.txt NEW-REPORT.jsonl';
   if (command === '--help' && args.length === 0) {
     console.log(usage);

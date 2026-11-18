@@ -54,7 +54,7 @@ fn run(
 ///|
 /// Check a candidate configuration before a reader or issuer is switched.
 #export_name("checkUpgrade")
-pub fn check_upgrade(previous : String, next : String) -> String {
+pub fn check_upgrade(previous : String, next : String, issue : Bool) -> String {
   let active = @migration.Registry::parse(previous) catch {
     error =>
       return failure("invalid_previous_manifest", @debug.to_string(error)).stringify()
@@ -63,9 +63,16 @@ pub fn check_upgrade(previous : String, next : String) -> String {
     error =>
       return failure("invalid_candidate_manifest", @debug.to_string(error)).stringify()
   }
-  active.check_upgrade(candidate) catch {
-    error =>
-      return failure("incompatible_upgrade", @debug.to_string(error)).stringify()
+  if issue {
+    active.check_issuer(candidate) catch {
+      error =>
+        return failure("issuer_not_ready", @debug.to_string(error)).stringify()
+    }
+  } else {
+    active.check_upgrade(candidate) catch {
+      error =>
+        return failure("incompatible_upgrade", @debug.to_string(error)).stringify()
+    }
   }
   ({ "ok": true } : Json).stringify()
 }

@@ -54,6 +54,13 @@ try {
   await writeFile(previousPath, JSON.stringify(previous));
   const check = cli(['check-upgrade', previousPath, fixture]);
   assert.equal(check.status, 0, check.error?.message ?? check.stderr);
+  const ready = cli(['check-issuer', previousPath, fixture]);
+  assert.equal(ready.status, 0, ready.error?.message ?? ready.stderr);
+  const original = join(work, 'original.json');
+  await writeFile(original, JSON.stringify({ ...previous, profiles: previous.profiles.slice(0, 1) }));
+  const premature = cli(['check-issuer', original, fixture]);
+  assert.equal(premature.status, 1);
+  assert.match(premature.stderr, /issuer_not_ready.*ReadersMissingVersion/);
   previous.profiles[0].alphabet = previous.profiles[0].alphabet.slice(1) + 'a';
   await writeFile(previousPath, JSON.stringify(previous));
   const incompatible = cli(['check-upgrade', fixture, previousPath]);

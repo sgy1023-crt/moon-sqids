@@ -10,6 +10,11 @@ import {
 // Values
 
 // Errors
+pub suberror IssuerError {
+  ReadersIncompatible(UpgradeError)
+  ReadersMissingVersion(String)
+} derive(@debug.Debug)
+
 pub suberror ManifestError {
   BadJson(String)
   BadVersion(String)
@@ -78,6 +83,7 @@ pub(all) struct Profile {
 } derive(Eq, @json.FromJson)
 
 type Registry
+pub fn Registry::check_issuer(Self, Self) -> Unit raise IssuerError
 pub fn Registry::check_upgrade(Self, Self) -> Unit raise UpgradeError
 pub fn Registry::decode(Self, String) -> DecodedToken raise TokenError
 pub fn Registry::encode(Self, ArrayView[Int64]) -> String raise TokenError
