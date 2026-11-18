@@ -1,0 +1,7 @@
+import {
+  "sgy/moon-sqids/migration",
+  "moonbitlang/core/debug",
+  "moonbitlang/core/json",
+}
+
+pkgtype(kind: "foreign_library")
