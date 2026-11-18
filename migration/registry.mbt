@@ -28,6 +28,8 @@ pub(all) struct Profile {
 /// Configuration rejected before a registry can be used.
 pub suberror ManifestError {
   BadJson(String)
+  UnknownManifestKey(String, String)
+  InvalidProfileLength(Int)
   BadVersion(String)
   DuplicateVersion(String)
   UnconfiguredVersion(String)
@@ -51,10 +53,57 @@ struct Registry {
 /// Parse and validate the same JSON manifest used by the migration CLI.
 /// Int64 range bounds are decimal strings in JSON.
 pub fn Registry::parse(text : String) -> Registry raise ManifestError {
-  let manifest : Manifest = @json.from_json(@json.parse(text)) catch {
+  let document = @json.parse(text) catch {
+    error => raise BadJson(@debug.to_string(error))
+  }
+  validate_json(document)
+  let manifest : Manifest = @json.from_json(document) catch {
     error => raise BadJson(@debug.to_string(error))
   }
   Registry::new(manifest)
+}
+
+///|
+fn check_keys(
+  object : Map[String, Json],
+  allowed : ArrayView[String],
+  location : String,
+) -> Unit raise ManifestError {
+  for key, _ in object {
+    if !allowed.contains(key) {
+      raise UnknownManifestKey(location, key)
+    }
+  }
+}
+
+///|
+fn validate_json(document : Json) -> Unit raise ManifestError {
+  guard document is Object(root) else { return }
+  check_keys(root, ["current", "legacy", "fields", "profiles"], "manifest")
+  if root.get("fields") is Some(Array(fields)) {
+    for field in fields {
+      if field is Object(object) {
+        check_keys(object, ["name", "min", "max"], "field")
+      }
+    }
+  }
+  if root.get("profiles") is Some(Array(profiles)) {
+    for index, profile in profiles {
+      if profile is Object(object) {
+        check_keys(
+          object,
+          ["version", "alphabet", "min_length", "blocklist"],
+          "profile",
+        )
+        if object.get("min_length") is Some(Number(length, ..)) &&
+          !(length >= 0.0 &&
+          length <= 255.0 &&
+          length.to_int().to_double() == length) {
+          raise InvalidProfileLength(index)
+        }
+      }
+    }
+  }
 }
 
 ///|

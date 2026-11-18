@@ -17,6 +17,8 @@ pub suberror IssuerError {
 
 pub suberror ManifestError {
   BadJson(String)
+  UnknownManifestKey(String, String)
+  InvalidProfileLength(Int)
   BadVersion(String)
   DuplicateVersion(String)
   UnconfiguredVersion(String)
