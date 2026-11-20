@@ -1,5 +1,6 @@
-"""Package MoonSqids and test its public API from an independent module."""
+"""Test the packaged or registry-installed MoonSqids in an independent module."""
 
+import argparse
 from pathlib import Path
 import subprocess
 import tempfile
@@ -8,44 +9,54 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMEOUT_SECONDS = 60
+MODULE = "sgy1023-crt/moon-sqids"
+RELEASE = f"{MODULE}@0.2.0"
 
 
 def moon(cwd, *args):
     subprocess.run(["moon", *args], cwd=cwd, check=True, timeout=TIMEOUT_SECONDS)
 
 
-def main():
+def add_local_package(workspace):
+    build = workspace / "build"
+    moon(ROOT, "package", "--target-dir", str(build))
+    archives = list((build / "publish").glob("*.zip"))
+    if len(archives) != 1:
+        raise RuntimeError(f"expected one module archive, found {archives}")
+
+    with zipfile.ZipFile(archives[0]) as archive:
+        entries = set(archive.namelist())
+        required = {"moon.mod", "moon.pkg", "sqids.mbt", "default_blocklist.mbt",
+                    "migration/moon.pkg", "migration/registry.mbt", "migration/plan.mbt",
+                    "README.md", "LICENSE", "NOTICE.md"}
+        if missing := required - entries:
+            raise RuntimeError(f"package is missing {sorted(missing)}")
+        if any("node_modules" in Path(entry).parts for entry in entries):
+            raise RuntimeError("package contains development dependencies")
+        archive.extractall(workspace / "library")
+    (workspace / "moon.work").write_text(
+        'members = ["consumer", "library"]\n', encoding="utf-8"
+    )
+    return archives[0].name
+
+
+def main(registry):
     with tempfile.TemporaryDirectory(prefix="moonsqids-consumer-") as directory:
         workspace = Path(directory)
-        build = workspace / "build"
-        moon(ROOT, "package", "--target-dir", str(build))
-        archives = list((build / "publish").glob("*.zip"))
-        if len(archives) != 1:
-            raise RuntimeError(f"expected one module archive, found {archives}")
-
-        library = workspace / "library"
-        with zipfile.ZipFile(archives[0]) as archive:
-            entries = set(archive.namelist())
-            required = {"moon.mod", "moon.pkg", "sqids.mbt", "default_blocklist.mbt",
-                        "migration/moon.pkg", "migration/registry.mbt", "migration/plan.mbt",
-                        "README.md", "LICENSE", "NOTICE.md"}
-            if missing := required - entries:
-                raise RuntimeError(f"package is missing {sorted(missing)}")
-            if any("node_modules" in Path(entry).parts for entry in entries):
-                raise RuntimeError("package contains development dependencies")
-            archive.extractall(library)
-
         consumer = workspace / "consumer"
         consumer.mkdir()
-        (workspace / "moon.work").write_text(
-            'members = ["consumer", "library"]\n', encoding="utf-8"
-        )
-        (consumer / "moon.mod").write_text(
-            'name = "smoke/consumer"\nimport { "sgy1023-crt/moon-sqids@0.2.0" }\n',
-            encoding="utf-8",
-        )
+        manifest = consumer / "moon.mod"
+        manifest.write_text('name = "smoke/consumer"\n', encoding="utf-8")
+        if registry:
+            moon(consumer, "add", RELEASE)
+            source = f"Mooncakes {RELEASE}"
+        else:
+            source = add_local_package(workspace)
+            manifest.write_text(
+                f'name = "smoke/consumer"\nimport {{ "{RELEASE}" }}\n', encoding="utf-8"
+            )
         (consumer / "moon.pkg").write_text(
-            'import { "sgy1023-crt/moon-sqids" @sqids, "sgy1023-crt/moon-sqids/migration" @migration } for "test"\n',
+            f'import {{ "{MODULE}" @sqids, "{MODULE}/migration" @migration }} for "test"\n',
             encoding="utf-8",
         )
         (consumer / "consumer_test.mbt").write_text(
@@ -76,8 +87,10 @@ test "external module can upgrade a public ID" {
         )
         for target in ("native", "js"):
             moon(consumer, "test", "-p", "smoke/consumer", "--target", target, "--deny-warn")
-        print(f"Verified {archives[0].name} from an independent Native and JS consumer.")
+        print(f"Verified {source} from an independent Native and JS consumer.")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--registry", action="store_true", help="install the pinned Mooncakes release")
+    main(parser.parse_args().registry)

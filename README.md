@@ -8,13 +8,19 @@ NanoID 生成随机字符串。Hashids 有自己的编码格式。普通进制�
 
 ## 在另一个 MoonBit 项目中使用
 
-当前版本可从本地源码或 `moon package` 生成的 ZIP 引用。将 `moon-sqids/` 与你的 `app/` 放在同一工作区，然后在上一级创建 `moon.work`。
+从 Mooncakes 安装固定版本。
+
+```sh
+moon add sgy1023-crt/moon-sqids@0.2.0
+```
+
+如果要开发本地源码，将 `moon-sqids/` 与你的 `app/` 放在同一工作区，然后在上一级创建 `moon.work`。
 
 ```moonbit
 members = ["app", "moon-sqids"]
 ```
 
-在 `app/moon.mod` 中声明依赖。
+本地工作区也需要在 `app/moon.mod` 中声明相同的模块依赖。
 
 ```moonbit
 import {
@@ -29,8 +35,6 @@ import {
   "sgy1023-crt/moon-sqids" @sqids,
 }
 ```
-
-当前版本可用本地源码和发布 ZIP 接入。Mooncakes 发布状态见 [交接记录](HANDOFF.md)。
 
 ## 编解码
 
