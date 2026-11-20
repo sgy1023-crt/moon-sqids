@@ -1,5 +1,5 @@
 import {
-  "sgy/moon-sqids/migration",
+  "sgy1023-crt/moon-sqids/migration",
   "moonbitlang/core/debug",
   "moonbitlang/core/json",
 }

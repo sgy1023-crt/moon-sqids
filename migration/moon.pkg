@@ -1,5 +1,5 @@
 import {
-  "sgy/moon-sqids" @sqids,
+  "sgy1023-crt/moon-sqids" @sqids,
   "moonbitlang/core/json",
   "moonbitlang/core/debug",
 }

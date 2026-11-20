@@ -18,7 +18,7 @@ members = ["app", "moon-sqids"]
 
 ```moonbit
 import {
-  "sgy/moon-sqids@0.2.0",
+  "sgy1023-crt/moon-sqids@0.2.0",
 }
 ```
 
@@ -26,7 +26,7 @@ import {
 
 ```moonbit
 import {
-  "sgy/moon-sqids" @sqids,
+  "sgy1023-crt/moon-sqids" @sqids,
 }
 ```
 
@@ -68,7 +68,7 @@ let filtered = @sqids.Sqids::new(blocklist=["86Rf07"])
 
 ## 公开链接升级与迁移
 
-如果已对外发出短链接，可以使用 `sgy/moon-sqids/migration` 固定各版本的字符表、最小长度和屏蔽词，并约束 ID 中各整数字段的范围。读端可同时识别历史链接和带版本的新链接。写端切换前可以检查读端是否已经认识新配置。
+如果已对外发出短链接，可以使用 `sgy1023-crt/moon-sqids/migration` 固定各版本的字符表、最小长度和屏蔽词，并约束 ID 中各整数字段的范围。读端可同时识别历史链接和带版本的新链接。写端切换前可以检查读端是否已经认识新配置。
 
 ```sh
 moon build cmd/bridge --target js --release --deny-warn

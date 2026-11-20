@@ -41,11 +41,11 @@ def main():
             'members = ["consumer", "library"]\n', encoding="utf-8"
         )
         (consumer / "moon.mod").write_text(
-            'name = "smoke/consumer"\nimport { "sgy/moon-sqids@0.2.0" }\n',
+            'name = "smoke/consumer"\nimport { "sgy1023-crt/moon-sqids@0.2.0" }\n',
             encoding="utf-8",
         )
         (consumer / "moon.pkg").write_text(
-            'import { "sgy/moon-sqids" @sqids, "sgy/moon-sqids/migration" @migration } for "test"\n',
+            'import { "sgy1023-crt/moon-sqids" @sqids, "sgy1023-crt/moon-sqids/migration" @migration } for "test"\n',
             encoding="utf-8",
         )
         (consumer / "consumer_test.mbt").write_text(

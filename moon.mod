@@ -1,4 +1,4 @@
-name = "sgy/moon-sqids"
+name = "sgy1023-crt/moon-sqids"
 
 version = "0.2.0"
 

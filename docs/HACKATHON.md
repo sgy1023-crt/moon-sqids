@@ -11,7 +11,7 @@
 | 工程进度 | 0.2.0 提供兼容的编解码接口、严格解码、历史配置检查、业务字段校验、读端就绪检查、流式迁移和实际 HTTP 示例。 |
 | 使用场景 | 公开记录链接保持可用，多租户整数元组按业务字段校验后迁移，跨语言服务可继续交换兼容的原始 Sqid。示例中 `A6da` 和 `v2~Atbx25UEDm` 均定位记录 `12345`。 |
 | 验证 | Native 和 JS 各 36 项测试、1915 项官方 JS 差分、2 项独立 ZIP 消费测试。附带 HTTP 滚动升级和 100,000 条迁移及中断重跑的验证。 |
-| 仓库与包 | 公开仓库 [sgy1023-crt/moon-sqids](https://github.com/sgy1023-crt/moon-sqids)，默认分支 `main`。模块为 `sgy/moon-sqids@0.2.0`，Mooncakes 尚未发布。 |
+| 仓库与包 | 公开仓库 [sgy1023-crt/moon-sqids](https://github.com/sgy1023-crt/moon-sqids)，默认分支 `main`。模块为 `sgy1023-crt/moon-sqids@0.2.0`，Mooncakes 尚未发布。 |
 | 许可 | MoonSqids、JavaScript 参考实现和默认 blocklist 均采用 MIT。具体上游来源见 NOTICE。 |
 
 [生态查重](ECOSYSTEM_RESEARCH.md) · [兼容性实测](COMPATIBILITY.md) · [上游来源与许可](../NOTICE.md)
@@ -45,8 +45,9 @@
 
 [11 月官网](https://moonbitlang.github.io/Hackathon2026/) · [官网 11 月源码快照](https://github.com/moonbitlang/Hackathon2026/blob/2ca8a6440a5d6d1881104538852bf5f05c90c68e/src/App.tsx) · [11 月报名表](https://bxup9uklfcb.feishu.cn/share/base/form/shrcnWUMlgpbwHaXgzV7HmNhNhg) · [赛事章程](https://bxup9uklfcb.feishu.cn/wiki/Dx4Bwd6D1i3GfHkajQCcF7SznEd) · [诚信承诺书](https://bxup9uklfcb.feishu.cn/wiki/GKDswxuptiJRcxkzPgZcw1J6nAd)
 
-## 申报与验收仍待完成
+## 初审与终验
 
-- 初审前确认 11 月的精确时点、现有开发进度对资格的影响、申报项目数量和启动支持的履约细则。在表单填入公开仓库链接，由赛事方按规则核查有效提交。
-- 参赛者本人完成申报书、仓库 URL、申报类型、往届参与信息、表单要求的身份与联系方式、收款信息、诚信承诺及个人情况对应的条件字段。银行及身份信息直接填写官方表单。
-- 复审通过后以申报范围为准，保留反馈、修复和验收记录，发布版本并记录 Mooncakes 链接。
+2026 年 11 月 20 日确认十一月赛项目初审通过。终验以申报的功能范围和当月官方通知为准。
+
+- 在 Mooncakes 发布 0.2.0，并从注册表安装到独立项目，验证编解码和迁移 API。
+- 验收材料附公开仓库、发布版本、CI 与运行说明，按实际测试结果逐项记录。
