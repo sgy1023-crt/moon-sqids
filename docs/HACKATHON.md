@@ -11,7 +11,7 @@
 | 工程进度 | 0.2.0 提供兼容的编解码接口、严格解码、历史配置检查、业务字段校验、读端就绪检查、流式迁移和实际 HTTP 示例。 |
 | 使用场景 | 公开记录链接保持可用，多租户整数元组按业务字段校验后迁移，跨语言服务可继续交换兼容的原始 Sqid。示例中 `A6da` 和 `v2~Atbx25UEDm` 均定位记录 `12345`。 |
 | 验证 | Native 和 JS 各 36 项测试、1915 项官方 JS 差分、2 项独立 ZIP 消费测试。附带 HTTP 滚动升级和 100,000 条迁移及中断重跑的验证。 |
-| 仓库与包 | 公开仓库 [sgy1023-crt/moon-sqids](https://github.com/sgy1023-crt/moon-sqids)，默认分支 `main`。模块为 `sgy1023-crt/moon-sqids@0.2.0`，Mooncakes 尚未发布。 |
+| 仓库与包 | 公开仓库 [sgy1023-crt/moon-sqids](https://github.com/sgy1023-crt/moon-sqids)，默认分支 `main`。发布版本 [sgy1023-crt/moon-sqids@0.2.0](https://mooncakes.io/docs/sgy1023-crt/moon-sqids@0.2.0)。 |
 | 许可 | MoonSqids、JavaScript 参考实现和默认 blocklist 均采用 MIT。具体上游来源见 NOTICE。 |
 
 [生态查重](ECOSYSTEM_RESEARCH.md) · [兼容性实测](COMPATIBILITY.md) · [上游来源与许可](../NOTICE.md)
@@ -49,5 +49,5 @@
 
 2026 年 11 月 20 日确认十一月赛项目初审通过。终验以申报的功能范围和当月官方通知为准。
 
-- 在 Mooncakes 发布 0.2.0，并从注册表安装到独立项目，验证编解码和迁移 API。
-- 验收材料附公开仓库、发布版本、CI 与运行说明，按实际测试结果逐项记录。
+- 0.2.0 的发布源码为 `87291a8`。CI 验证了双后端测试、上游差分、独立 ZIP 接入、HTTP 滚动升级与 100,000 条迁移后的中断重跑。 [发布提交的 CI](https://github.com/sgy1023-crt/moon-sqids/actions/runs/44670267471)
+- 运行 `python tools/check_package.py --registry` 可复现从 Mooncakes 安装。在独立工程中，基础编解码与迁移 API 分别在 Native 和 JavaScript 各通过两项测试。 [迁移流程与运行命令](../examples/rollout/README.md)

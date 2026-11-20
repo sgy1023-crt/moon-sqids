@@ -1,6 +1,6 @@
 # MoonSqids 交接记录
 
-2026 年 11 月 20 日确认十一月赛项目初审通过。已将待发布的 0.2.0 模块名对齐到 Mooncakes 账号 `sgy1023-crt`，独立工程从 ZIP 接入成功。发布后从注册表安装并复测基础编解码与迁移 API。
+2026 年 11 月 20 日确认十一月赛项目初审通过。同日从提交 `87291a8` 发布 `sgy1023-crt/moon-sqids@0.2.0`。使用 `python tools/check_package.py --registry` 从注册表下载到独立工程，Native 与 JavaScript 上的基础编解码及迁移各通过两项测试。 [Mooncakes 发布](https://mooncakes.io/docs/sgy1023-crt/moon-sqids@0.2.0) · [发布提交的 CI](https://github.com/sgy1023-crt/moon-sqids/actions/runs/44670267471)
 
 0.2.0 的复审范围、源码变更和复现入口见 [赛事工程事实](docs/HACKATHON.md) 与 [迁移示例](examples/rollout/README.md)。在 Windows 使用 Node.js 24.22.1 处理 100,000 条合成旧 ID 的一次单进程采样中，用时约 1.19 秒，峰值工作集约 80.8 MiB，报告大小约 11.9 MB。输入为同一个五字节短 ID 记录，真实负载取决于字符表、屏蔽词和输入长度。
 

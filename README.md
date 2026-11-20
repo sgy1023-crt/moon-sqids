@@ -8,7 +8,7 @@ NanoID 生成随机字符串。Hashids 有自己的编码格式。普通进制�
 
 ## 在另一个 MoonBit 项目中使用
 
-从 Mooncakes 安装固定版本。
+通过 Mooncakes 安装固定版本。 [MoonSqids 0.2.0](https://mooncakes.io/docs/sgy1023-crt/moon-sqids@0.2.0)
 
 ```sh
 moon add sgy1023-crt/moon-sqids@0.2.0
@@ -110,5 +110,7 @@ node tools/check_record_rollout.mjs
 node tools/check_migration_cli.mjs
 moon package
 ```
+
+要验证注册表下载安装，在仓库根目录运行 `python tools/check_package.py --registry`。脚本在独立工程中从 Mooncakes 安装固定版本，并在 Native 和 JavaScript 上验证编解码与迁移。
 
 本项目为 2026 年 11 月 MoonBit 黑客松新项目准备。项目与上游数据采用 MIT 许可，来源和固定版本见 [NOTICE.md](NOTICE.md)。实测与兼容边界见 [COMPATIBILITY.md](docs/COMPATIBILITY.md)，赛事核对见 [HACKATHON.md](docs/HACKATHON.md)。

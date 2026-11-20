@@ -9,12 +9,13 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 TIMEOUT_SECONDS = 60
+REGISTRY_UPDATE_TIMEOUT_SECONDS = 180
 MODULE = "sgy1023-crt/moon-sqids"
 RELEASE = f"{MODULE}@0.2.0"
 
 
-def moon(cwd, *args):
-    subprocess.run(["moon", *args], cwd=cwd, check=True, timeout=TIMEOUT_SECONDS)
+def moon(cwd, *args, timeout=TIMEOUT_SECONDS):
+    subprocess.run(["moon", *args], cwd=cwd, check=True, timeout=timeout)
 
 
 def add_local_package(workspace):
@@ -48,7 +49,8 @@ def main(registry):
         manifest = consumer / "moon.mod"
         manifest.write_text('name = "smoke/consumer"\n', encoding="utf-8")
         if registry:
-            moon(consumer, "add", RELEASE)
+            moon(consumer, "update", timeout=REGISTRY_UPDATE_TIMEOUT_SECONDS)
+            moon(consumer, "add", "--no-update", RELEASE)
             source = f"Mooncakes {RELEASE}"
         else:
             source = add_local_package(workspace)
